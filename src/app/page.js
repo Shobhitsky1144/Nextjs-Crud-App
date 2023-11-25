@@ -2,21 +2,29 @@
 import { useState } from 'react';
 
 export default function Home() {
-  const [text, setText] = useState('');
-  const [id, setId] = useState(null);
+  const [text, setText] = useState({
+    id:null,
+    name:null
+  });
   const [toggle, settoggle] = useState(false);
   const [list, setList] = useState([]);
 
   const handleSubmit=()=>{
+
     if(!toggle){
 
       setList([...list,text])
-      setText('')
+      setText({id:null,name:''})
     }else{
-      const updatedList=list.map((elem,ind)=>ind===id?text:elem)
-      console.log(updatedList)
+     const updatedList=list.map((elem)=>{
+        return(
+         
+         elem.id===text.id?text:elem
+        )
+      })
+
       setList(updatedList)
-      setText('')
+      setText({id:null,name:null})
       setId(null)
       settoggle(false)
     }
@@ -26,23 +34,24 @@ export default function Home() {
     const data=list.filter((val,id)=>ind!==id);
     setList(data)
   }
-  const editItem=(item,ind)=>{
+  const editItem=(item)=>{
     settoggle(true)
-    setText(item)
-    setId(ind)
+    setText({id:item.id,name:item.name})
+    // setId(ind)
   }
 
   return (
     <main >
-      <input type='text' value={text} onChange={(e) => setText(e.target.value)} />
+    
+      <input type='text' value={text.name} onChange={(e) => setText({...text,id:list.length,name:e.target.value})} />
       <button onClick={handleSubmit}>{toggle ? "Edit" : "ADD"}</button>
       {
-        list?.map((item,ind)=>{
+          list?.map((item)=>{
           return(
-          <div key={ind}>
-            <h1 >{item}</h1><br/>
-            <button onClick={()=>deleteItem(ind)}>Delete</button>
-            <button onClick={()=>editItem(item,ind)}>Edit</button>
+          <div key={item.id}>
+            <h1 >{item.name}</h1><br/>
+            <><button onClick={()=>deleteItem(item.id)}>Delete</button>
+            <button onClick={()=>editItem(item)}>Edit</button> </>
             </div>
           )
         })
